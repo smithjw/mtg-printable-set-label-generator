@@ -8,9 +8,22 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'daily'
-  - package-ecosystem: 'python'
+      interval: 'weekly'
+    groups:
+      github-actions:
+        patterns:
+          - '*'
+        update-types:
+          - 'minor'
+          - 'patch'
+  - package-ecosystem: 'pip'
     directory: '/'
     schedule:
-      interval: 'daily'
-      
+      interval: 'weekly'
+    groups:
+      pip:
+        patterns:
+          - '*'
+        update-types:
+          - 'minor'
+          - 'patch'
