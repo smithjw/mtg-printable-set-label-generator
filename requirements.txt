@@ -1,6 +1,0 @@
-CairoSVG==2.7.1
-fpdf2==2.7.7
-pandas==2.1.4
-pillow==10.2.0
-requests==2.31.0
-urllib3==2.1.0
