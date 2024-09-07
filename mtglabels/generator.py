@@ -26,7 +26,7 @@ class SetDividers:
         self.minimum_set_size = defaults.MINIMUM_SET_SIZE
 
         self.output_dir = Path(output_dir)
-        self.output_name = datetime.now().strftime("%Y-%m-%d") + "-set_dividers.pdf"
+        self.output_name = f"Set_Dividers-{datetime.now().strftime("%Y%m%d%H%M%S")}.pdf"
 
     def new_page_check(self, pdf, label_count):
         if label_count > 0 and label_count % defaults.LABELS_PER_PAGE == 0:
@@ -35,7 +35,6 @@ class SetDividers:
 
         label_count += 1
         return label_count
-
 
     def process_svg(self, svg_icon, set_icon_filename, target_size):
         logging.debug(f"svg_icon Type: {type(svg_icon)}")
@@ -82,7 +81,6 @@ class SetDividers:
         for mtg_set in formatted_set_data:
             logging.debug(f"Writing Label {label_count}")
             label_count = self.new_page_check(pdf, label_count)
-
             template["text_line_1"] = mtg_set["set_name"]
             template["text_line_2"] = f"{mtg_set["set_code"]} - {mtg_set["set_date"]}"
             template["set_icon"] = mtg_set["set_icon"]
@@ -92,7 +90,6 @@ class SetDividers:
             template.render(offsetx=mtg_set["x_offset"], offsety=mtg_set["y_offset"])
 
         pdf.output(self.output_dir / self.output_name)
-
 
     def get_pips(self):
         """return an dict of pips and their base64 encoded svg from the resources/pips directory"""
@@ -104,14 +101,19 @@ class SetDividers:
         return pips
 
     def calculate_template_offsets(self):
-
         if args.disable_offset:
             x_page_offset = 0
             y_page_offset = 0
         else:
             logging.debug("Calculating page offset values")
-            x_page_offset = ( defaults.PAPER_SIZES[self.paper_size]["width"] - ( defaults.DIVIDER_WIDTH * defaults.LABELS_PER_ROW ) ) / 2
-            y_page_offset = ( defaults.PAPER_SIZES[self.paper_size]["height"] - ( defaults.DIVIDER_HEIGHT * defaults.LABELS_PER_COLUMN ) ) / 2
+            x_page_offset = (
+                defaults.PAPER_SIZES[self.paper_size]["width"]
+                - (defaults.DIVIDER_WIDTH * defaults.LABELS_PER_ROW)
+            ) / 2
+            y_page_offset = (
+                defaults.PAPER_SIZES[self.paper_size]["height"]
+                - (defaults.DIVIDER_HEIGHT * defaults.LABELS_PER_COLUMN)
+            ) / 2
 
         logging.debug(f"Page offset values: {x_page_offset}, {y_page_offset}")
 
@@ -168,9 +170,7 @@ class SetDividers:
         Returns the path to the set icon, downloading it if necessary
         """
 
-        set_icons_path = Path(
-            BASE_DIR / "resources" / "set_icons"
-        )
+        set_icons_path = Path(BASE_DIR / "resources" / "set_icons")
         set_icon_filename = set_icons_path / f"{scryfall_id}.png"
 
         # Check if the icon already exists
@@ -207,13 +207,17 @@ class SetDividers:
 
             formatted_set_data = [
                 {
-                    "set_name": defaults.RENAME_SETS.get(mtg_set["name"], mtg_set["name"]),
+                    "set_name": defaults.RENAME_SETS.get(
+                        mtg_set["name"], mtg_set["name"]
+                    ),
                     "set_id": mtg_set["id"],
                     "set_code": mtg_set["code"].upper(),
                     "set_date": datetime.strptime(
                         mtg_set["released_at"], "%Y-%m-%d"
                     ).strftime("%b %Y"),
-                    "set_icon": self.get_set_icon(mtg_set["id"], mtg_set["icon_svg_uri"]),
+                    "set_icon": self.get_set_icon(
+                        mtg_set["id"], mtg_set["icon_svg_uri"]
+                    ),
                     "pip_icon": pip,
                     **next(template_offsets_cycle),
                 }
@@ -256,5 +260,6 @@ if __name__ == "__main__":
     args = setup_args()
     debug = args.debug if args.debug else False
     setup_logger(debug)
+    logging.getLogger("fpdf.svg").disabled = True
 
     main()

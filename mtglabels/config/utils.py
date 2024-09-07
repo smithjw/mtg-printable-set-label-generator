@@ -43,12 +43,14 @@ def setup_args():
         ),
         metavar="SET_CODE",
     )
-    parser.add_argument(
-        "--csv",
-        help="Captures set information from a CSV file",
-        metavar="CSV_PATH",
-        type=argparse.FileType("r"),
-    ),
+    (
+        parser.add_argument(
+            "--csv",
+            help="Captures set information from a CSV file",
+            metavar="CSV_PATH",
+            type=argparse.FileType("r"),
+        ),
+    )
     parser.add_argument(
         "--pips",
         action="store_true",
